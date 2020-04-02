@@ -1,7 +1,8 @@
 # Site settings
 title: XGW BLOG
 SEOTitle: 光伟的博客 | guangwei Blog
-header-img: img/post-bg-desk.jpg
+#header-img: img/post-bg-desk.jpg
+header-img: img/xgw.jpeg
 #email:
 description: "Living alone means being productive."
 keyword: "XGW, GW, XGW Blog, Java"
