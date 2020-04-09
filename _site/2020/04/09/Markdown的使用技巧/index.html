@@ -10,7 +10,7 @@
     <meta name="keywords"  content="GW, GW Blog, 光伟, Java">
     <meta name="theme-color" content="#000000">
     
-    <title>为博客添加 Gitalk 评论插件 - 您里边请~</title>
+    <title>Markdown的使用技巧 - 您里边请~</title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="http://erasr.github.io/2017/12/19/%E4%B8%BA%E5%8D%9A%E5%AE%A2%E6%B7%BB%E5%8A%A0-Gitalk-%E8%AF%84%E8%AE%BA%E6%8F%92%E4%BB%B6/">
+    <link rel="canonical" href="http://erasr.github.io/2020/04/09/Markdown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -154,13 +154,13 @@
 
     <!-- Image to hack wechat -->
 <!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
-<!-- <img src="/img/post-bg-universe.jpg" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-coffee.jpeg" width="0" height="0"> -->
 
 <!-- Post Header -->
 <style type="text/css">
     header.intro-header{
         position: relative;
-        background-image: url('/img/post-bg-universe.jpg')
+        background-image: url('/img/post-bg-coffee.jpeg')
     }
 
     
@@ -173,15 +173,15 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/#Blog" title="Blog">Blog</a>
+                        <a class="tag" href="/tags/#Markdown" title="Markdown">Markdown</a>
                         
                     </div>
-                    <h1>为博客添加 Gitalk 评论插件</h1>
+                    <h1>Markdown的使用技巧</h1>
                     
                     
-                    <h2 class="subheading">BY Blog 添加 Gitalk 的评论插件了</h2>
+                    <h2 class="subheading">Markdown使用技巧</h2>
                     
-                    <span class="meta">Posted by BY on December 19, 2017</span>
+                    <span class="meta">Posted by V on April 9, 2020</span>
                 </div>
             </div>
         </div>
@@ -199,112 +199,31 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h2 id="前言">前言</h2>
+				<h1 id="为文字添加背景色">为文字添加背景色</h1>
 
-<p>由于 <strong>Disqus</strong> 对于国内网路的支持十分糟糕，很多人反映 Disqus 评论插件一直加载不出来。而我一直是处于翻墙状态的~（话说你们做程序员的都不翻墙用Google的吗😅，哈哈，吐嘈下）</p>
-
-<p>针对这个问题，我添加了<a href="https://github.com/gitalk/gitalk">Gitalk</a> 评论插件。在此，非常感谢 <a href="https://github.com/FeDemo">@FeDemo</a> 的推荐 。</p>
-
-<h2 id="正文">正文</h2>
-
-<h3 id="gitalk-评论插件">Gitalk 评论插件</h3>
-
-<p>首先来看看 Gitalk 的界面和功能：</p>
-
-<p><a href="https://gitalk.github.io/"><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmm4u3j0lmj30nk0kl40i.jpg" alt="" /></a></p>
-
-<p>gitalk 使用 Github 帐号登录，界面干净整洁，最喜欢的一点是支持 <code>MarkDown语法</code>。</p>
-
-<h3 id="原理">原理</h3>
-
-<p>Gitalk 是一个利用 Github API,基于 Github issue 和 Preact 开发的评论插件，在 Gitalk 之前还有一个 <a href="https://github.com/imsun/gitment">gitment</a> 插件也是基于这个原理开发的,不过 gitment 已经很久没人维护了。</p>
-
-<p>可以看到在 gitalk 的评论框进行评论时，其实就是在对应的 issue 上提问题。</p>
-
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmm5916av1j30i209rab7.jpg" alt="gitalk评论框" /></p>
-
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmm596ggkfj30mx0gfjuk.jpg" alt="Github issue" /></p>
-
-<h3 id="集成-gitalk">集成 Gitalk</h3>
-
-<p>到这里，你应该对 Gitalk 有个大致的了解了，现在，开始集成 gitalk 插件吧。</p>
-
-<p>将这段代码插入到你的网站：</p>
-
-<pre><code class="language-js">&lt;!-- Gitalk 评论 start  --&gt;
-
-&lt;!-- Link Gitalk 的支持文件  --&gt;
-&lt;link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"&gt;
-&lt;script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"&gt;&lt;/script&gt;
-
-&lt;div id="gitalk-container"&gt;&lt;/div&gt;
-    &lt;script type="text/javascript"&gt;
-    var gitalk = new Gitalk({
-
-    // gitalk的主要参数
-		clientID: `Github Application clientID`,
-		clientSecret: `Github Application clientSecret`,
-		repo: `存储你评论 issue 的 Github 仓库名`,
-		owner: 'Github 用户名',
-		admin: ['Github 用户名'],
-		id: '页面的唯一标识，gitalk会根据这个标识自动创建的issue的标签',
-    
-    });
-    gitalk.render('gitalk-container');
-&lt;/script&gt;
-
-&lt;!-- Gitalk end --&gt;
+<pre><code>&lt;table border=0&gt;
+	&lt;tr border=0&gt;
+		&lt;td bgcolor=red&gt;测试&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;
 </code></pre>
 
-<p>我们需要关心的就是配置下面几个参数：</p>
+<p>效果如下：</p>
 
-<pre><code class="language-js">clientID: `Github Application clientID`,
-clientSecret: `Github Application clientSecret`,
-repo: `Github 仓库名`,//存储你评论 issue 的 Github 仓库名（建议直接用 GitHub Page 的仓库名）
-owner: 'Github 用户名',
-admin: ['Github 用户名'], //这个仓库的管理员，可以有多个，用数组表示，一般写自己,
-id: 'window.location.pathname', //页面的唯一标识，gitalk 会根据这个标识自动创建的issue的标签,我们使用页面的相对路径作为标识
-</code></pre>
-<p>当然，还有其他很多参数，有兴趣的话可以 <a href="https://github.com/gitalk/gitalk#options"> 点这里</a>。</p>
+<p>&lt;table border=0&gt;<br />
+	&lt;tr border=0&gt;<br />
+		&lt;td bgcolor=red&gt;测试&lt;/td&gt;<br />
+	&lt;/tr&gt;<br />
+&lt;/table&gt;</p>
 
-<p>比如我就增加了这个全屏遮罩的参数。</p>
+<h1 id="修改文字颜色">修改文字颜色</h1>
 
-<pre><code>distractionFreeMode: true,
+<pre><code>&lt;font color=red&gt;测试&lt;/font&gt;
 </code></pre>
 
-<h3 id="创建-github-application">创建 Github Application</h3>
+<p>效果如下：</p>
 
-<p>Gitalk 需要一个 <strong>Github Application</strong>，<a href="https://github.com/settings/applications/new">点击这里申请</a>。</p>
-
-<p>填写下面参数：</p>
-
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fmm7jaib6fj30jo0gaacs.jpg" alt="" /></p>
-
-<p>点击创建</p>
-
-<p>获取 <code>Client ID</code> 和 <code>Client Secret</code> 填入你的我们 Gitalk 参数中</p>
-
-<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fmm7jrzff6j30lc0budhp.jpg" alt="" /></p>
-
-<p>当你参数都设置好，将代码推送到 Github 仓库后，没什么问题的话，当你点击进入你的博客页面后就会出现评论框了。</p>
-
-<p>当你用 github 帐号登录（管理员），并且第一次加载该会比较慢，因为第一次加载会自动在你 <code>repo</code> 的仓库下创建对应 issue。</p>
-
-<p>比如说这样：</p>
-
-<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fmm867n88cj30l809mjse.jpg" alt="" /></p>
-
-<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fmm8a0i0jkj30rr0ct42t.jpg" alt="" /></p>
-
-<p>当然，你也可以手动创建issue作为 gitalk评论容器。只要有 <code>Gitalk</code> 标签 和 <code>id</code> 对应标签就可以。比我我自己创建的 <a href="https://github.com/qiubaiying/qiubaiying.github.io/issues/38">About issue</a> 。</p>
-
-<h1 id="结语">结语</h1>
-
-<p>最后说几句吐嘈几句， Gitalk 需要你点开每篇文章的页面才会创建对应的 issue,对我来说真是个糟糕的体验（文章有点多~）。</p>
-
-<p>当然，也有解决办法，这篇 <a href="https://draveness.me/git-comments-initialize">自动初始化 Gitalk 和 Gitment 评论</a>，就解决了这个问题。</p>
-
-<p>最后，<a href="https://github.com/qiubaiying/qiubaiying.github.io">给个 star 吧</a>~</p>
+<p>&lt;font color=red&gt;测试&lt;/font&gt;</p>
 
 
                 <hr style="visibility: hidden;">
@@ -312,19 +231,12 @@ id: 'window.location.pathname', //页面的唯一标识，gitalk 会根据这个
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2017/07/10/%E3%80%8C%E4%BD%93%E8%83%BD%E8%AE%AD%E7%BB%83%E7%90%86%E8%AE%BA%E3%80%8D%E4%B9%8B%E9%87%91%E5%AD%97%E5%A1%94/" data-toggle="tooltip" data-placement="top" title="「体能训练理论」之金字塔">
-                        Previous<br>
-                        <span>「体能训练理论」之金字塔</span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="next">
                         <a href="/2020/04/09/IDEA%E6%96%87%E4%BB%B6%E5%90%8D%E9%A2%9C%E8%89%B2%E6%89%80%E4%BB%A3%E8%A1%A8%E7%9A%84%E5%90%AB%E4%B9%89/" data-toggle="tooltip" data-placement="top" title="IDEA文件名颜色所代表的含义">
-                        Next<br>
+                        Previous<br>
                         <span>IDEA文件名颜色所代表的含义</span>
                         </a>
                     </li>
+                    
                     
                 </ul>
 

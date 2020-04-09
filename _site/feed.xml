@@ -5,109 +5,72 @@
     <description>「Just fucking DO it.」</description>
     <link>http://erasr.github.io/</link>
     <atom:link href="http://erasr.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 09 Apr 2020 13:14:19 +0800</pubDate>
-    <lastBuildDate>Thu, 09 Apr 2020 13:14:19 +0800</lastBuildDate>
+    <pubDate>Thu, 09 Apr 2020 16:37:17 +0800</pubDate>
+    <lastBuildDate>Thu, 09 Apr 2020 16:37:17 +0800</lastBuildDate>
     <generator>Jekyll v2.5.0</generator>
     
       <item>
-        <title>从一道网易面试题浅谈 Tagged Pointer</title>
-        <description>&lt;h2 id=&quot;前言&quot;&gt;前言&lt;/h2&gt;
+        <title>Markdown的使用技巧</title>
+        <description>&lt;h1 id=&quot;为文字添加背景色&quot;&gt;为文字添加背景色&lt;/h1&gt;
 
-&lt;p&gt;这篇博客九月就想写了，因为赶项目拖了到现在，抓住17年尾巴写吧~&lt;/p&gt;
-
-&lt;h2 id=&quot;正文&quot;&gt;正文&lt;/h2&gt;
-
-&lt;p&gt;上次看了一篇 &lt;a href=&quot;https://www.jianshu.com/p/cec2a41aa0e7&quot;&gt;《从一道网易面试题浅谈OC线程安全》&lt;/a&gt; 的博客，主要内容是：&lt;/p&gt;
-
-&lt;p&gt;作者去网易面试，面试官出了一道面试题：下面代码会发生什么问题？&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-objc&quot;&gt;@property (nonatomic, strong) NSString *target;
-//....
-dispatch_queue_t queue = dispatch_queue_create(&quot;parallel&quot;, DISPATCH_QUEUE_CONCURRENT);
-for (int i = 0; i &amp;lt; 1000000 ; i++) {
-    dispatch_async(queue, ^{
-        self.target = [NSString stringWithFormat:@&quot;ksddkjalkjd%d&quot;,i];
-    });
-}
+&lt;pre&gt;&lt;code&gt;&amp;lt;table border=0&amp;gt;
+	&amp;lt;tr border=0&amp;gt;
+		&amp;lt;td bgcolor=red&amp;gt;测试&amp;lt;/td&amp;gt;
+	&amp;lt;/tr&amp;gt;
+&amp;lt;/table&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;答案是：会 crash。&lt;/p&gt;
+&lt;p&gt;效果如下：&lt;/p&gt;
 
-&lt;p&gt;我们来看看对&lt;code&gt;target&lt;/code&gt;属性（&lt;code&gt;strong&lt;/code&gt;修饰）进行赋值，相当与 MRC 中的&lt;/p&gt;
+&lt;p&gt;&amp;lt;table border=0&amp;gt;&lt;br /&gt;
+	&amp;lt;tr border=0&amp;gt;&lt;br /&gt;
+		&amp;lt;td bgcolor=red&amp;gt;测试&amp;lt;/td&amp;gt;&lt;br /&gt;
+	&amp;lt;/tr&amp;gt;&lt;br /&gt;
+&amp;lt;/table&amp;gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;- (void)setTarget:(NSString *)target {
-    if (target == _target) return;
-    id pre = _target;
-    [target retain];//1.先保留新值
-    _target = target;//2.再进行赋值
-    [pre release];//3.释放旧值
-}
+&lt;h1 id=&quot;修改文字颜色&quot;&gt;修改文字颜色&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;font color=red&amp;gt;测试&amp;lt;/font&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;因为在 &lt;em&gt;并行队列&lt;/em&gt; &lt;code&gt;DISPATCH_QUEUE_CONCURRENT&lt;/code&gt; 中&lt;em&gt;异步&lt;/em&gt; &lt;code&gt;dispatch_async&lt;/code&gt; 对 &lt;code&gt;target&lt;/code&gt;属性进行赋值，就会导致 target 已经被 &lt;code&gt;release&lt;/code&gt;了，还会执行 &lt;code&gt;release&lt;/code&gt;。这就是向已释放内存对象发送消息而发生 crash 。&lt;/p&gt;
+&lt;p&gt;效果如下：&lt;/p&gt;
 
-&lt;h3 id=&quot;但是&quot;&gt;但是&lt;/h3&gt;
-
-&lt;p&gt;我敲了这段代码，执行的时候发现并不会 crash~&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-objc&quot;&gt;@property (nonatomic, strong) NSString *target;
-dispatch_queue_t queue = dispatch_queue_create(&quot;parallel&quot;, DISPATCH_QUEUE_CONCURRENT);
-for (int i = 0; i &amp;lt; 1000000 ; i++) {
-    dispatch_async(queue, ^{
-    	// ‘ksddkjalkjd’删除了
-        self.target = [NSString stringWithFormat:@&quot;%d&quot;,i];
-    });
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;原因就出在对 &lt;code&gt;self.target&lt;/code&gt; 赋值的字符串上。博客的最后也提到了 - &lt;em&gt;‘上述代码的字符串改短一些，就不会崩溃’&lt;/em&gt;，还有 &lt;code&gt;Tagged Pointer&lt;/code&gt; 这个东西。&lt;/p&gt;
-
-&lt;p&gt;我们将上面的代码修改下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-objc&quot;&gt;NSString *str = [NSString stringWithFormat:@&quot;%d&quot;, i];
-NSLog(@&quot;%d, %s, %p&quot;, i, object_getClassName(str), str);
-self.target = str;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;输出：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;0, NSTaggedPointerString, 0x3015
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;发现这个字符串类型是 &lt;code&gt;NSTaggedPointerString&lt;/code&gt;，那我们来看看 Tagged Pointer 是什么？&lt;/p&gt;
-
-&lt;h3 id=&quot;tagged-pointer&quot;&gt;Tagged Pointer&lt;/h3&gt;
-
-&lt;p&gt;Tagged Pointer 详细的内容可以看这里 &lt;a href=&quot;http://www.infoq.com/cn/articles/deep-understanding-of-tagged-pointer&quot;&gt;深入理解Tagged Pointer&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;Tagged Pointer 是一个能够提升性能、节省内存的有趣的技术。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Tagged Pointer 专门用来存储小的对象，例如 &lt;strong&gt;NSNumber&lt;/strong&gt; 和 &lt;strong&gt;NSDate&lt;/strong&gt;（后来可以存储小字符串）&lt;/li&gt;
-  &lt;li&gt;Tagged Pointer 指针的值不再是地址了，而是真正的值。所以，实际上它不再是一个对象了，它只是一个披着对象皮的普通变量而已。&lt;/li&gt;
-  &lt;li&gt;它的内存并不存储在堆中，也不需要 malloc 和 free，所以拥有极快的读取和创建速度。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;参考&quot;&gt;参考：&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.jianshu.com/p/cec2a41aa0e7&quot;&gt;从一道网易面试题浅谈OC线程安全&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;http://www.infoq.com/cn/articles/deep-understanding-of-tagged-pointer&quot;&gt;深入理解Tagged Pointer&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;http://www.cocoachina.com/ios/20150918/13449.html&quot;&gt;【译】采用Tagged Pointer的字符串&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
+&lt;p&gt;&amp;lt;font color=red&amp;gt;测试&amp;lt;/font&amp;gt;&lt;/p&gt;
 </description>
-        <pubDate>Tue, 26 Dec 2017 00:00:00 +0800</pubDate>
-        <link>http://erasr.github.io/2017/12/26/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-Tagged-Pointer/</link>
-        <guid isPermaLink="true">http://erasr.github.io/2017/12/26/%E4%BB%8E%E4%B8%80%E9%81%93%E7%BD%91%E6%98%93%E9%9D%A2%E8%AF%95%E9%A2%98%E6%B5%85%E8%B0%88-Tagged-Pointer/</guid>
+        <pubDate>Thu, 09 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://erasr.github.io/2020/04/09/Markdown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</link>
+        <guid isPermaLink="true">http://erasr.github.io/2020/04/09/Markdown%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</guid>
         
-        <category>iOS</category>
+        <category>Markdown</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>IDEA文件名颜色所代表的含义</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;记录下IDEA使用的细节&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;idea文件名颜色所代表的含义&quot;&gt;IDEA文件名颜色所代表的含义&lt;/h1&gt;
+
+&lt;p&gt;红色，未加入版本控制；&lt;/p&gt;
+
+&lt;p&gt;绿色，已经加入版本控制暂未提交；&lt;/p&gt;
+
+&lt;p&gt;蓝色，加入版本控制，已提交，有改动；&lt;/p&gt;
+
+&lt;p&gt;白色，加入版本控制，已提交，无改动；&lt;/p&gt;
+
+&lt;p&gt;灰色，版本控制已忽略文件。&lt;/p&gt;
+</description>
+        <pubDate>Thu, 09 Apr 2020 00:00:00 +0800</pubDate>
+        <link>http://erasr.github.io/2020/04/09/IDEA%E6%96%87%E4%BB%B6%E5%90%8D%E9%A2%9C%E8%89%B2%E6%89%80%E4%BB%A3%E8%A1%A8%E7%9A%84%E5%90%AB%E4%B9%89/</link>
+        <guid isPermaLink="true">http://erasr.github.io/2020/04/09/IDEA%E6%96%87%E4%BB%B6%E5%90%8D%E9%A2%9C%E8%89%B2%E6%89%80%E4%BB%A3%E8%A1%A8%E7%9A%84%E5%90%AB%E4%B9%89/</guid>
+        
+        <category>IDEA</category>
+        
+        <category>Git</category>
         
         
       </item>
@@ -911,296 +874,6 @@ b45959e HEAD@{2}: revert: Revert &quot;add img&quot;
         <pubDate>Thu, 16 Feb 2017 00:00:00 +0800</pubDate>
         <link>http://erasr.github.io/2017/02/16/Git-%E4%BB%A3%E7%A0%81%E5%9B%9E%E6%BB%9A/</link>
         <guid isPermaLink="true">http://erasr.github.io/2017/02/16/Git-%E4%BB%A3%E7%A0%81%E5%9B%9E%E6%BB%9A/</guid>
-        
-        <category>Mac</category>
-        
-        <category>终端</category>
-        
-        <category>Git</category>
-        
-        
-      </item>
-    
-      <item>
-        <title>Git指令整理</title>
-        <description>&lt;blockquote&gt;
-  &lt;p&gt;随便整理的一些自用的Git指令&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h1 id=&quot;github创建仓库提示代码&quot;&gt;GitHub创建仓库提示代码&lt;/h1&gt;
-
-&lt;pre&gt;&lt;code&gt;echo &quot;# 项目名&quot; &amp;gt;&amp;gt; README.md
-git init
-git add README.md
-git commit -m &quot;first commit&quot;
-git remote add origin git@github.com:qiubaiying/项目名.git
-git push -u origin master
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;若仓库存在直接push&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;git remote add origin git@github.com:qiubaiying/test.git
-git push -u origin master
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&quot;常用操作&quot;&gt;常用操作&lt;/h1&gt;
-
-&lt;h4 id=&quot;创建仓库初始化&quot;&gt;创建仓库（初始化）&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;在当前指定目录下创建
-git init
-
-新建一个仓库目录
-git init [project-name]
-
-克隆一个远程项目
-git clone [url]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;添加文件到缓存区&quot;&gt;添加文件到缓存区&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;添加所有变化的文件
- 	git add .
-
-添加名称指定文件
-git add text.txt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;配置&quot;&gt;配置&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;设置提交代码时的用户信息
-git config [--global] user.name &quot;[name]&quot;
-git config [--global] user.email &quot;[email address]&quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;提交&quot;&gt;提交&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;提交暂存区到仓库区
-git commit -m &quot;msg&quot;
-
-# 提交暂存区的指定文件到仓库区
-$ git commit [file1] [file2] ... -m [message]
-
-# 提交工作区自上次commit之后的变化，直接到仓库区
-$ git commit -a
-
-# 提交时显示所有diff信息
-$ git commit -v
-
-# 使用一次新的commit，替代上一次提交
-# 如果代码没有任何新变化，则用来改写上一次commit的提交信息
-$ git commit --amend -m [message]
-
-# 重做上一次commit，并包括指定文件的新变化
-$ git commit --amend [file1] [file2] ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;远程同步&quot;&gt;远程同步&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;# 下载远程仓库的所有变动
-$ git fetch [remote]
-
-# 显示所有远程仓库
-$ git remote -v
-
-# 显示某个远程仓库的信息
-$ git remote show [remote]
-
-# 增加一个新的远程仓库，并命名
-$ git remote add [shortname] [url]
-
-# 取回远程仓库的变化，并与本地分支合并
-$ git pull [remote] [branch]
-
-# 上传本地指定分支到远程仓库
-$ git push [remote] [branch]
-
-# 强行推送当前分支到远程仓库，即使有冲突
-$ git push [remote] --force
-
-# 推送所有分支到远程仓库
-$ git push [remote] --all
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;分支&quot;&gt;分支&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;# 列出所有本地分支
-$ git branch
-
-# 列出所有远程分支
-$ git branch -r
-
-# 列出所有本地分支和远程分支
-$ git branch -a
-
-# 新建一个分支，但依然停留在当前分支
-$ git branch [branch-name]
-
-# 新建一个分支，并切换到该分支
-$ git checkout -b [branch]
-
-# 新建一个分支，指向指定commit
-$ git branch [branch] [commit]
-
-# 新建一个分支，与指定的远程分支建立追踪关系
-$ git branch --track [branch] [remote-branch]
-
-# 切换到指定分支，并更新工作区
-$ git checkout [branch-name]
-
-# 切换到上一个分支
-$ git checkout -
-
-# 建立追踪关系，在现有分支与指定的远程分支之间
-$ git branch --set-upstream [branch] [remote-branch]
-
-# 合并指定分支到当前分支
-$ git merge [branch]
-
-# 选择一个commit，合并进当前分支
-$ git cherry-pick [commit]
-
-# 删除分支
-$ git branch -d [branch-name]
-
-# 删除远程分支
-$ git push origin --delete [branch-name]
-$ git branch -dr [remote/branch]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;标签tags&quot;&gt;标签Tags&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;添加标签 在当前commit
-git tag -a v1.0 -m &#39;xxx&#39; 
-
-添加标签 在指定commit
-git tag v1.0 [commit]
-
-查看
-git tag
-
-删除
-git tag -d V1.0
-
-删除远程tag
-git push origin :refs/tags/[tagName]
-
-推送
-git push origin --tags
-
-拉取
-git fetch origin tag V1.0
-
-新建一个分支，指向某个tag
-git checkout -b [branch] [tag]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;查看信息&quot;&gt;查看信息&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;# 显示有变更的文件
-$ git status
-
-# 显示当前分支的版本历史
-$ git log
-
-# 显示commit历史，以及每次commit发生变更的文件
-$ git log --stat
-
-# 搜索提交历史，根据关键词
-$ git log -S [keyword]
-
-# 显示某个commit之后的所有变动，每个commit占据一行
-$ git log [tag] HEAD --pretty=format:%s
-
-# 显示某个commit之后的所有变动，其&quot;提交说明&quot;必须符合搜索条件
-$ git log [tag] HEAD --grep feature
-
-# 显示某个文件的版本历史，包括文件改名
-$ git log --follow [file]
-$ git whatchanged [file]
-
-# 显示指定文件相关的每一次diff
-$ git log -p [file]
-
-# 显示过去5次提交
-$ git log -5 --pretty --oneline
-
-# 显示所有提交过的用户，按提交次数排序
-$ git shortlog -sn
-
-# 显示指定文件是什么人在什么时间修改过
-$ git blame [file]
-
-# 显示暂存区和工作区的差异
-$ git diff
-
-# 显示暂存区和上一个commit的差异
-$ git diff --cached [file]
-
-# 显示工作区与当前分支最新commit之间的差异
-$ git diff HEAD
-
-# 显示两次提交之间的差异
-$ git diff [first-branch]...[second-branch]
-
-# 显示今天你写了多少行代码
-$ git diff --shortstat &quot;@{0 day ago}&quot;
-
-# 显示某次提交的元数据和内容变化
-$ git show [commit]
-
-# 显示某次提交发生变化的文件
-$ git show --name-only [commit]
-
-# 显示某次提交时，某个文件的内容
-$ git show [commit]:[filename]
-
-# 显示当前分支的最近几次提交
-$ git reflog
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;撤销&quot;&gt;撤销&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;# 恢复暂存区的指定文件到工作区
-$ git checkout [file]
-
-# 恢复某个commit的指定文件到暂存区和工作区
-$ git checkout [commit] [file]
-
-# 恢复暂存区的所有文件到工作区
-$ git checkout .
-
-# 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
-$ git reset [file]
-
-# 重置暂存区与工作区，与上一次commit保持一致
-$ git reset --hard
-
-# 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
-$ git reset [commit]
-
-# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
-$ git reset --hard [commit]
-
-# 重置当前HEAD为指定commit，但保持暂存区和工作区不变
-$ git reset --keep [commit]
-
-# 新建一个commit，用来撤销指定commit
-# 后者的所有变化都将被前者抵消，并且应用到当前分支
-$ git revert [commit]
-
-# 暂时将未提交的变化移除，稍后再移入
-$ git stash
-$ git stash pop
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;其他&quot;&gt;其他&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;# 生成一个可供发布的压缩包
-$ git archives
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-        <pubDate>Wed, 15 Feb 2017 00:00:00 +0800</pubDate>
-        <link>http://erasr.github.io/2017/02/15/Git%E6%8C%87%E4%BB%A4%E6%95%B4%E7%90%86/</link>
-        <guid isPermaLink="true">http://erasr.github.io/2017/02/15/Git%E6%8C%87%E4%BB%A4%E6%95%B4%E7%90%86/</guid>
         
         <category>Mac</category>
         
