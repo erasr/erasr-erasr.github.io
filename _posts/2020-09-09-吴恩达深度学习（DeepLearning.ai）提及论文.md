@@ -20,7 +20,7 @@ tags:
 
 >[Srivastava, Nitish, et al. “Dropout: a simple way to prevent neural networks from overfitting.” The journal of machine learning research 15.1 (2014): 1929-1958.](http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b43&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
 
-####Adam####
+####Adam
 >[Kingma, Diederik P., and Jimmy Ba. “Adam: A method for stochastic optimization.” arXiv preprint arXiv:1412.6980 (2014).](https://arxiv.org/pdf/1412.6980.pdf)
 
 ###第三课《结构化机器学习项目》###
