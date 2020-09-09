@@ -10,12 +10,13 @@ tags:
     - 深度学习
 ---
 
-###第一课《神经网络和深度学习》###
+
+### 第一课《神经网络和深度学习》###
 无
 
-###第二课《改善神经网络：超参调整，正则化和优化》###
+### 第二课《改善神经网络：超参调整，正则化和优化》###
 
-####Dropout####
+#### Dropout####
 
 >[Srivastava, Nitish, et al. “Dropout: a simple way to prevent neural networks from overfitting.” The journal of machine learning research 15.1 (2014): 1929-1958.](http://www.jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf?utm_content=buffer79b43&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
 
