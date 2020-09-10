@@ -4,4 +4,5 @@ _site/
 .jekyll-metadata
 
 .gitignore
+.DS_Store
 2020-09-09-模板.md
