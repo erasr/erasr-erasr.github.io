@@ -4,7 +4,7 @@ title:      TensorFlow使用中遇到的问题（macOS）
 subtitle:   将遇到的错误整理一下
 date:       2020-09-11
 author:     V
-header-img: img/post-bg-coffee.jpeg
+header-img: img/post-bg-keybord.jpg
 catalog: true
 tags:
     - TensorFlow 错误集合 Mac
@@ -12,7 +12,7 @@ tags:
 
 ### 1. TensorFlow安装报错RuntimeError: dictionary changed size during iteration
 
->TensorFlow版本：'1.15.3'
+>TensorFlow版本：1.15.3
 >
 >Python版本 ：3.7.3
 >
@@ -43,5 +43,7 @@ See ":help W12" for more info.
 这里按`L`即可，表示重新载入文件
 
 至此，搞定
+
+---
 
 
