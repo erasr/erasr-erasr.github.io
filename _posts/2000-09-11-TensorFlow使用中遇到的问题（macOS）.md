@@ -4,7 +4,7 @@ title:      TensorFlow使用中遇到的问题（macOS）
 subtitle:   将遇到的错误整理一下
 date:       2020-09-11
 author:     V
-header-img: img/post-bg-keybord.jpg
+header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
     - TensorFlow 错误集合 Mac

@@ -4,7 +4,7 @@ title:      Mac使用Timemachine自动备份
 subtitle:   Timemachine谁用谁知道
 date:       2020-09-11
 author:     V
-header-img: img/post-bg-keybord.jpg
+header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
     - Mac
