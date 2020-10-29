@@ -7,7 +7,7 @@ author:     V
 header-img: img/post-bg-github-cup.jpg
 catalog: true
 tags:
-    - TensorFlow 错误集合 Mac
+    - TensorFlow
 ---
 
 ### 1. TensorFlow安装报错RuntimeError: dictionary changed size during iteration
