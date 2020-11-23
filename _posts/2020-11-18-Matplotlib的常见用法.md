@@ -18,7 +18,7 @@ tags:
 
 ![图片来源[matplotlib](https://matplotlib.org/1.5.1/faq/usage_faq.html#parts-of-a-figure)](/img/postImg/20201117_2.png)
 
-FIgure是整个「画板」，也就是红色的框。在上边可以画多个图像（Axes），也就是蓝色的框。而蓝色的框才是具体的坐标轴（Axis）。
+Figure是整个「画板」，也就是红色的框。在上边可以画多个图像（Axes），也就是蓝色的框。而蓝色的框才是具体的坐标轴（Axis）。
 
 Axes是Axis的复数，Axes在这里指的是一套坐标轴，而Axis才是指的具体单个坐标轴。何为「一套坐标轴」、「单个坐标轴」呢？有人这么说：
 
